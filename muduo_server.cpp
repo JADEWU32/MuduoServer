@@ -32,10 +32,10 @@ public:
         : _server(loop, listenAddr, nameArg), _loop(loop)
     {
         // 给服务器注册用户连接的创建和断开回调函数
-        _server.setConnectionCallback(bind(&onConnection, this, _1));
+        _server.setConnectionCallback(bind(&ChatServer::onConnection, this, _1));
 
         // 给服务器注册用户读写事件回调函数
-        _server.setMessageCallback(bind(&onMessage, this, _1, _2, _3));
+        _server.setMessageCallback(bind(&ChatServer::onMessage, this, _1, _2, _3));
 
         // 设置服务器端的线程数量 1个I/O线程，3个worker线程
         _server.setThreadNum(4);
