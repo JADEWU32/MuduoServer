@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/jade/Downloads/MuduoServer/build",
+  "command": "/usr/bin/c++ -Dmymuduo_EXPORTS   -g -std=c++11 -g -fPIC -o CMakeFiles/mymuduo.dir/InetAddress.o -c /home/jade/Downloads/MuduoServer/InetAddress.cpp",
+  "file": "/home/jade/Downloads/MuduoServer/InetAddress.cpp",
+  "output": "CMakeFiles/mymuduo.dir/InetAddress.o"
+},
+{
+  "directory": "/home/jade/Downloads/MuduoServer/build",
+  "command": "/usr/bin/c++ -Dmymuduo_EXPORTS   -g -std=c++11 -g -fPIC -o CMakeFiles/mymuduo.dir/Logger.o -c /home/jade/Downloads/MuduoServer/Logger.cc",
+  "file": "/home/jade/Downloads/MuduoServer/Logger.cc",
+  "output": "CMakeFiles/mymuduo.dir/Logger.o"
+},
+{
+  "directory": "/home/jade/Downloads/MuduoServer/build",
+  "command": "/usr/bin/c++ -Dmymuduo_EXPORTS   -g -std=c++11 -g -fPIC -o CMakeFiles/mymuduo.dir/Timestamp.o -c /home/jade/Downloads/MuduoServer/Timestamp.cc",
+  "file": "/home/jade/Downloads/MuduoServer/Timestamp.cc",
+  "output": "CMakeFiles/mymuduo.dir/Timestamp.o"
+}
+]

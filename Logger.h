@@ -33,6 +33,7 @@
         char buf[1024] = {0};                             \
         snprintf(buf, 1024, logmsgFormat, ##__VA_ARGS__); \
         logger.log(buf);                                  \
+        exit(-1);\
     } while (0)
 
 #ifdef MUDEBUG
@@ -46,7 +47,7 @@
         logger.log(buf);                                  \
     } while (0)
 #else
-    #define LOG_DEBUG(logmsgFormat, ...)
+#define LOG_DEBUG(logmsgFormat, ...)
 #endif
 // 定义日志的级别 INFO ERROR FATAL DEBUG
 enum LogLevel
@@ -58,7 +59,7 @@ enum LogLevel
 };
 
 // 输出一个日志类
-class Logger
+class Logger : noncopyable
 {
 public:
     // 获取日志唯一的实例对象
@@ -70,6 +71,8 @@ public:
 
 private:
     // ps 一些系统的变量会将_写在前面，然后将_设置在后面有助于区分
+    // 日志等级
     int logLevel_;
+    // 私有化构造函数，让日志类构造只能通过类内成员方法进行构造
     Logger() {}
 };
