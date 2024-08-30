@@ -1,11 +1,11 @@
 #include "InetAddress.h"
 
-#include <strings.h>
+#include <iostream>
 #include <string.h>
 
 InetAddress::InetAddress(uint16_t port, std::string ip)
 {
-    bzero(&addr_, sizeof addr_);
+    bzero(&addr_, sizeof(addr_));
     addr_.sin_family = AF_INET;
     // 将一个 16 位的主机字节序的整数转换为网络字节序
     addr_.sin_port = htons(port);

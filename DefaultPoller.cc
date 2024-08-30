@@ -1,7 +1,7 @@
-#pragma once
 // 该文件作为公共源文件进行包括和引用，这样可以避免出现派生类和基类互相引用的情况
 
 #include "Poller.h"
+#include "EPollPoller.h"
 
 #include <stdlib.h>
 Poller *Poller::newDefaultPoller(EventLoop *loop)
@@ -13,6 +13,6 @@ Poller *Poller::newDefaultPoller(EventLoop *loop)
     }
     else
     {
-        return nullptr; // 生成epoll的实例
+        return new EPollPoller(loop); // 生成epoll的实例
     }
 }

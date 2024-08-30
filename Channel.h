@@ -36,14 +36,14 @@ public:
 
     int fd() const { return fd_; }
     int events() const { return events_; }
-    int set_revents(int revt) { revents_ = revt; }
+    void set_revents(int revt) { revents_ = revt; }
 
     // 设置fd相应的事件状态
-    void enableReading() { events_ |= kReadEvent; update();}
-    void disableReading() { events_ &= ~kReadEvent; update();}
-    void enableWriting() { events_ |= kWriteEvent; update();}
-    void disableWriting() { events_ &= ~kWriteEvent; update();}
-    void disableAll() { events_ = kNoneEvent; update();}
+    void enableReading() { events_ |= kReadEvent; update(); }       // 感兴趣事件设置为读
+    void disableReading() { events_ &= ~kReadEvent; update(); }     // 清除读感兴趣事件
+    void enableWriting() { events_ |= kWriteEvent; update(); }      // 感兴趣事件设置为写
+    void disableWriting() { events_ &= ~kWriteEvent; update(); }    // 清除写感兴趣事件
+    void disableAll() { events_ = kNoneEvent; update(); }           // 清除所有感兴趣事件
 
     // 返回fd当前的事件状态
     bool isNoneEvent() const { return events_ == kNoneEvent; }
@@ -51,15 +51,14 @@ public:
     bool isWriting() const { return events_ & kWriteEvent; }
 
     // index用于区分channel状态
-    int index() { return index_;}
-    void set_index(int idx) {index_ = idx;}
+    int index() { return index_; }
+    void set_index(int idx) { index_ = idx; }
 
     // one loop per thread
-    Eventloop* ownerLoop() {return loop_;}
+    EventLoop *ownerLoop() { return loop_; }
     void remove();
 
 private:
-
     void update();
     void handleEventWithGuard(Timestamp receiveTime);
 

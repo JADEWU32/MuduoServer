@@ -1,11 +1,13 @@
 #pragma once
 
 #include "noncopyable.h"
+#include "EventLoop.h"
 
 #include <vector>
 #include <unordered_map>
 
 class Channel;
+class Timestamp;
 
 // muduo库中多路事件分发器的核心IP复用模块
 class Poller : noncopyable
@@ -36,5 +38,5 @@ protected:
     ChannelMap channels_;
 
 private:
-    EventLoop *ownerloop_;
-}
+    EventLoop *ownerLoop_;
+};

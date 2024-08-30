@@ -1,3 +1,0 @@
-/home/jade/Downloads/MuduoServer/build/CMakeFiles/mymuduo.dir
-/home/jade/Downloads/MuduoServer/build/CMakeFiles/edit_cache.dir
-/home/jade/Downloads/MuduoServer/build/CMakeFiles/rebuild_cache.dir

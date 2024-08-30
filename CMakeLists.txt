@@ -9,4 +9,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
 # 定义参与编译的源代码文件
 aux_source_directory(. SRC_LIST)
 # 编译生成动态库MuduoServer
-add_library(mymuduo SHARED ${SRC_LIST})
+add_library(MuduoServer SHARED ${SRC_LIST})
