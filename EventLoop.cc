@@ -26,7 +26,8 @@ int createEventfd()
     return evtfd;
 }
 EventLoop::EventLoop()
-    : looping_(false), quit_(false), callingPendingFunctors_(false), threadId_(CurrentThread::tid()), poller_(Poller::newDefaultPoller(this)), wakeupFd_(createEventfd()), wakeupChannel_(new Channel(this, wakeupFd_)), currentActiveChannel_(nullptr)
+    : looping_(false), quit_(false), callingPendingFunctors_(false), threadId_(CurrentThread::tid()), poller_(Poller::newDefaultPoller(this))
+    , wakeupFd_(createEventfd()), wakeupChannel_(new Channel(this, wakeupFd_)), currentActiveChannel_(nullptr)
 {
     LOG_DEBUG("EventLoop created %p in thread %d \n", this, threadId_);
     // 初始构造时若该线程中loop已存在,则说明出现了两个loop,于是fatal报错,退出程序
@@ -125,7 +126,7 @@ void EventLoop::queueInLoop(Functor cb)
 
     // 唤醒相应的需要执行回调操作的loop的线程了
     // 这里的callingPendingFunctors_表示当前loop正在执行回调,但是loop又有了新的回调
-    if (!isInLoopThread() || callingPendingFunctors_) 
+    if (!isInLoopThread() || callingPendingFunctors_)
     {
         wakeup(); // 唤醒loop所在线程
     }

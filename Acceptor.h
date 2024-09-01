@@ -13,7 +13,7 @@ class Acceptor : noncopyable
 {
 public:
     using NewConnectionCallback = std::function<void(int sockfd, const InetAddress &)>;
-    
+
     Acceptor(EventLoop *loop, const InetAddress &listenAddr, bool reuseporty);
     ~Acceptor();
 
@@ -33,3 +33,7 @@ private:
     NewConnectionCallback newConnectionCallback_;
     bool listenning_;
 };
+
+/* 主要功能：
+创建socket 然后进行listen
+*/

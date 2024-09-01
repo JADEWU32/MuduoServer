@@ -24,7 +24,8 @@ static EventLoop *CheckLoopNotNull(EventLoop *loop)
 }
 
 TcpConnection::TcpConnection(EventLoop *loop, const std::string &nameArg, int sockfd, const InetAddress &localAddr, const InetAddress &peerAddr)
-    : loop_(CheckLoopNotNull(loop)), name_(nameArg), state_(kConnecting), reading_(true), socket_(new Socket(sockfd)), channel_(new Channel(loop, sockfd)), peerAddr_(peerAddr), localAddr_(localAddr), highWaterMArk_(64 * 1024 * 1024)
+    : loop_(CheckLoopNotNull(loop)), name_(nameArg), state_(kConnecting), reading_(true), socket_(new Socket(sockfd))
+    , channel_(new Channel(loop, sockfd)), peerAddr_(peerAddr), localAddr_(localAddr), highWaterMArk_(64 * 1024 * 1024)
 {
     channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this, std::placeholders::_1));
     channel_->setWriteCallback(std::bind(&TcpConnection::handleWrite, this));
@@ -37,8 +38,7 @@ TcpConnection::TcpConnection(EventLoop *loop, const std::string &nameArg, int so
 
 TcpConnection::~TcpConnection()
 {
-    LOG_INFO("TcpConnection::dtor[%s] at fd =%d state = %d\n",
-             name_.c_str(), channel_->fd(), (int)state_);
+    LOG_INFO("TcpConnection::dtor[%s] at fd =%d state = %d\n", name_.c_str(), channel_->fd(), (int)state_);
 }
 
 void TcpConnection::handleRead(Timestamp receiveTime)
@@ -152,7 +152,7 @@ void TcpConnection::sendInLoop(const void *data, size_t len)
     if (!channel_->isWriting() && outputBuffer_.readableBytes() == 0)
     {
         nwrote = ::write(channel_->fd(), data, len);
-        if (nwrote >= 0)
+        if (nwrote >= 0) // 如果写入成功，更新 remaining 为剩余未写入的数据量
         {
             remaining = len - nwrote;
             if (remaining == 0 && writeCompleteCallback_)

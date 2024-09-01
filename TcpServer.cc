@@ -17,10 +17,12 @@ TcpServer::TcpServer(EventLoop *loop,
                      const InetAddress &listenAddr,
                      const std::string &nameArg,
                      Option option)
-    : loop_(CheckLoopNotNull(loop)), ipport_(listenAddr.toIpPort()), name_(nameArg), acceptor_(new Acceptor(loop, listenAddr, option == kReusePort)), threadPool_(new EventLoopThreadPool(loop, name_)), connectionCallback_(), messageCallback_(), nextConnId_(1), started_(0)
+    : loop_(CheckLoopNotNull(loop)), ipport_(listenAddr.toIpPort()), name_(nameArg),
+     acceptor_(new Acceptor(loop, listenAddr, option == kReusePort)),
+      threadPool_(new EventLoopThreadPool(loop, name_)), connectionCallback_(), messageCallback_(), nextConnId_(1), started_(0)
 
 {
-    // 用户连接，执行回调操作
+    // 用户连接，执行回调操作，给Accept模块添加定义好的新建连接回调函数
     acceptor_->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -54,15 +56,15 @@ void TcpServer::newConnection(int sockfd, const InetAddress &peerAddr)
     // 轮询算法选择subloop，管理channel
     EventLoop *ioLoop = threadPool_->getNextLoop();
     char buf[64] = {0};
-    snprintf(buf, sizeof buf, "%s#%d", ipport_.c_str(), nextConnId_);
+    snprintf(buf, sizeof(buf), "%s#%d", ipport_.c_str(), nextConnId_);
     ++nextConnId_;
     std::string connName = name_ + buf;
 
     LOG_INFO("TcpServer::newConnection[%s] - new connection [%s] from %s \n", name_.c_str(), connName.c_str(), peerAddr.toIpPort().c_str());
     // 通过sockfd获取绑定的本机ip地址和端口号
     sockaddr_in local;
-    ::bzero(&local, sizeof local);
-    socklen_t addrlen = sizeof local;
+    ::bzero(&local, sizeof(local));
+    socklen_t addrlen = sizeof(local);
     if (::getsockname(sockfd, (sockaddr *)&local, &addrlen) < 0)
     {
         LOG_ERROR("sockets::getLocalAddr");
