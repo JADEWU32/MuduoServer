@@ -47,7 +47,7 @@ private:
     {
         std::string msg = buffer->retrieveAllAsString();
         conn->send(msg); // 收到什么数据发回去什么数据
-        conn->shutdown();
+        // conn->shutdown();
     }
     EventLoop *_loop;
     TcpServer _server;
@@ -56,7 +56,7 @@ private:
 int main()
 {
     EventLoop loop;
-    InetAddress addr(8000);                          // 默认是127.0.0.1
+    InetAddress addr(8080);                          // 默认是127.0.0.1
     EchoServer server(&loop, addr, "EchoServer-01"); // Acceptor non-blocking listenfd create bind
     server.start();                                  // listen loopthread listenfd ->acceptorChannel ->mainLoop
     loop.loop();                                     // 启动mainloop的底层Poller

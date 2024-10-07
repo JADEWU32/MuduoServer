@@ -35,6 +35,12 @@ public:
             retrieveAll();
         }
     }
+    void retrieveUntil(const char* end)
+    {
+        if(peek() <= end && end <= beginWrite()){
+            retrieve(end - peek());
+        }
+    }
     // 可读剩余空间为0，因此全部初始化为最开始的样子
     void retrieveAll()
     {
@@ -68,6 +74,15 @@ public:
         std::copy(data, data + len, beginWrite());
         writerIndex_ += len;
     }
+
+    void append(const std::string& str)
+    {
+        int len = static_cast<int>(str.size());
+        ensureWriteableBytes(len);
+        std::copy(str.data(), str.data() + len, beginWrite());
+        writerIndex_ += len;
+    }
+
     char *beginWrite()
     {
         return begin() + writerIndex_;
@@ -81,6 +96,22 @@ public:
     ssize_t readFd(int fd, int *saveErrno);
     // 通过fd发送数据
     ssize_t writeFd(int fd, int *saveErrno);
+
+    const char* findCRLF() const
+    {
+        const char* crlf = std::search(peek(), beginWrite(), kCRLF, kCRLF+2);
+        return crlf == beginWrite() ? NULL : crlf;
+    }
+
+    const char* findCRLF(const char* start) const
+    {
+
+        if(peek() <= start && start <= beginWrite()){
+            const char* crlf = std::search(start, beginWrite(), kCRLF, kCRLF+2);
+            return crlf == beginWrite() ? NULL : crlf;
+        }
+        return NULL;
+    }
 
 private:
     char *begin()
@@ -113,4 +144,5 @@ private:
     std::vector<char> buffer_;
     size_t readerIndex_; // 可读数据的起始位置
     size_t writerIndex_; // 可写数据的起始位置
+    static const char kCRLF[];
 };

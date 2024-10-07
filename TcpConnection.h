@@ -5,14 +5,16 @@
 #include "Buffer.h"
 #include "InetAddress.h"
 #include "Timestamp.h"
+#include "Socket.h"
 
 #include <memory>
 #include <atomic>
 #include <string>
+#include <any>
 
 class Channel;
 class EventLoop;
-class Socket;
+// class Socket;
 
 class TcpConnection : noncopyable, public std::enable_shared_from_this<TcpConnection>
 {
@@ -33,6 +35,12 @@ public:
     // 发送数据
 
     void send(const std::string &buf);
+    void send(Buffer *buf);
+
+    void setContext(const std::any &context) { context_ = context; };
+    const std::any& getContext() const { return context_; }
+
+    std::any* getMutableContext() { return &context_; }
     // 关闭数据
     void shutdown();
 
@@ -50,6 +58,10 @@ public:
     void connectionEstablished();
     // 销毁链接
     void connectionDestroyed();
+
+    int getsocketfd(){
+        return socket_->fd();
+    }
 
 private:
     enum StateE
@@ -82,14 +94,16 @@ private:
     const InetAddress localAddr_;
     const InetAddress peerAddr_;
 
-    ConnectionCallback connectionCallback_;
-    MessageCallback messageCallback_;
-    WriteCompleteCallback writeCompleteCallback_;
-    HighWaterMarkCallback highWaterMarkCallback_;
-    CloseCallback closeCallback_;
+    ConnectionCallback      connectionCallback_;    // 建立连接时的回调函数
+    MessageCallback         messageCallback_;       // 接收信息时的回调函数
+    WriteCompleteCallback   writeCompleteCallback_; // 写入完成时的回调函数
+    HighWaterMarkCallback   highWaterMarkCallback_;
+    CloseCallback           closeCallback_;         // 关闭连接时的回调函数
 
     size_t highWaterMArk_;
 
     Buffer inputBuffer_;
     Buffer outputBuffer_;
+
+    std::any context_;
 };

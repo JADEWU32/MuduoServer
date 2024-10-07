@@ -46,7 +46,20 @@ public:
     // 判断EventLoop对象是否在自己的线程里面
     bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
 
+    // std::vector<std::string> getOutString(){
+    //     std::vector<std::string> temp;
+    //     swap(temp, _outputstring);
+    //     return move(temp);
+    // }
+
+    // void addOutString(std::string& msg){
+    //     _outputstring.emplace_back(msg);
+    // }
+
 private:
+
+    // std::vector<std::string> _outputstring;
+
     void handleRead();        // 执行wake up
     void doPendingFunctors(); // 执行回调
 

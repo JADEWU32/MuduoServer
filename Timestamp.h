@@ -13,6 +13,11 @@ public:
     static Timestamp now();
     std::string toString() const;
 
+    void swap(Timestamp& that)
+    {
+        std::swap(microSecondsSinceEpoch_, that.microSecondsSinceEpoch_);
+    }
+    
 private:
     int64_t microSecondsSinceEpoch_;
 };

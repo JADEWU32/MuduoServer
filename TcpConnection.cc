@@ -24,8 +24,7 @@ static EventLoop *CheckLoopNotNull(EventLoop *loop)
 }
 
 TcpConnection::TcpConnection(EventLoop *loop, const std::string &nameArg, int sockfd, const InetAddress &localAddr, const InetAddress &peerAddr)
-    : loop_(CheckLoopNotNull(loop)), name_(nameArg), state_(kConnecting), reading_(true), socket_(new Socket(sockfd))
-    , channel_(new Channel(loop, sockfd)), peerAddr_(peerAddr), localAddr_(localAddr), highWaterMArk_(64 * 1024 * 1024)
+    : loop_(CheckLoopNotNull(loop)), name_(nameArg), state_(kConnecting), reading_(true), socket_(new Socket(sockfd)), channel_(new Channel(loop, sockfd)), peerAddr_(peerAddr), localAddr_(localAddr), highWaterMArk_(64 * 1024 * 1024)
 {
     channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this, std::placeholders::_1));
     channel_->setWriteCallback(std::bind(&TcpConnection::handleWrite, this));
@@ -134,6 +133,23 @@ void TcpConnection::send(const std::string &buf)
         else
         {
             loop_->runInLoop(std::bind(&TcpConnection::sendInLoop, this, buf.c_str(), buf.size()));
+        }
+    }
+}
+
+void TcpConnection::send(Buffer *buf)
+{
+    if (state_ == kConnected)
+    {
+        if (loop_->isInLoopThread())
+        {
+            sendInLoop(buf->peek(), buf->readableBytes());
+            buf->retrieveAll();
+        }
+        else
+        {
+            void (TcpConnection::*fp)(const void *data, size_t len) = &TcpConnection::sendInLoop;
+            loop_->runInLoop(std::bind(fp, this, buf->retrieveAllAsString().data(), buf->retrieveAllAsString().size()));
         }
     }
 }
