@@ -20,3 +20,7 @@ TcpServer工作流程如下：
 server.start函数调用启动底层的线程池，创建loop子线程并开启loop.loop() 再把acceptChannel注册在baseloop的poller上，最终开启baseLoop的loop()。
 
 若Channel上有相应的感兴趣事件发生，EventLoop会回调Channel的各种事件的回调函数，通过回调函数内容去具体执行事件发生时该执行的内容。
+
+# 拓展内容
+在http_test文件夹中，添加了一个可以监控http请求和tcp连接的项目代码，该测试代码中，额可以通过对http的请求不同而对服务端的信息进行修改和显示
+需要json环境，对应客户端可以打开websocket-demo中的index.html文件进行运行
