@@ -1,0 +1,22 @@
+# MyMuduo
+muduo网络库是一款功能强大、易于使用、代码设计优秀的开源网络库。
+通过对其深入剖析，从开源muduo网络库中学习优秀的代码设计思路。
+
+本项目通过对muduo网络库中的TcpServer等核心组件进行输出，实现muduo网络库核心功能。
+
+通过此项目可深入理解TCP协议、IO复用接口编程、Linux多线程编程、理解select、poll、epoll优缺点、epoll原理和优势、Reactor模型等网络编程核心知识。
+
+# 核心
+重写muduo网络库，分离网络层和业务层代码；
+掌握基于事件驱动和事件回调的“epoll+线程池”面向对象编程；
+mainLoop与subLoop中用系统调用，wakeupfd来做线程之间的通知，没有使用同步队列，代替了生产者消费者模型，使得效率大大提高；
+贯彻 one loop per thread 核心理念。
+
+# 工作流程
+以TcpServer对象构造，梳理工作流程。
+TcpServer工作流程如下：
+创建Acceptor对象acceptor，该对象主要工作是当有一个连接想要连进来后，创建listenfd并整合为acceptChannel，其acceptChannel只关注读事件，通过enableReading函数（读事件使能函数）将其在poller上进行注册，之后poller来监听acceptChannel上发生的事件。如果有连接事件发生则调用handleRead函数，accept返回一个connfd并执行回调newConnectionCallback，newConnectionCallback该回调函数是TcpServer通过轮询算法选择一个subloop进行Channel分配。基于one loop one thread架构，所以通过wakeupfd唤醒subLoop，把connfd封装成channel分发给subLoop。
+
+server.start函数调用启动底层的线程池，创建loop子线程并开启loop.loop() 再把acceptChannel注册在baseloop的poller上，最终开启baseLoop的loop()。
+
+若Channel上有相应的感兴趣事件发生，EventLoop会回调Channel的各种事件的回调函数，通过回调函数内容去具体执行事件发生时该执行的内容。
